@@ -7,22 +7,22 @@ import 'benchmark_result.dart';
 import 'image_benchmark.dart';
 import 'peak_rss_sampler.dart';
 
-/// Passes only a file path (not bytes) to Kotlin. Kotlin reads, decodes,
-/// resizes, encodes, and saves entirely on the native side with no byte copy
-/// across the Flutter bridge. This represents "pure native" speed and isolates
-/// the MethodChannel copy cost from the compute cost.
+/// Passes only a file path (not bytes) to native code (Kotlin/Swift), which
+/// reads, decodes, resizes, encodes, and saves entirely on the native side
+/// with no byte copy across the Flutter bridge. This represents "pure native"
+/// speed and isolates the MethodChannel copy cost from the compute cost.
 class NativeFileBenchmark implements ImageBenchmark {
   static const _channel = MethodChannel('rush_demo/native');
 
   @override
   String get name => 'Native (file path, no copy)';
 
-  static bool get isSupported => Platform.isAndroid;
+  static bool get isSupported => Platform.isAndroid || Platform.isIOS;
 
   @override
   Future<BenchmarkResult> run(Uint8List source) async {
     if (!isSupported) {
-      throw UnsupportedError('Native file benchmark is Android-only.');
+      throw UnsupportedError('Native file benchmark is mobile-only.');
     }
 
     // Write source bytes to a temp file — NOT timed, this is just setup.

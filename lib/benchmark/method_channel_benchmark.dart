@@ -10,22 +10,23 @@ class MethodChannelBenchmark implements ImageBenchmark {
   static const _channel = MethodChannel('rush_demo/native');
 
   @override
-  String get name => 'MethodChannel (Kotlin)';
+  String get name =>
+      Platform.isIOS ? 'MethodChannel (Swift)' : 'MethodChannel (Kotlin)';
 
-  static bool get isSupported => Platform.isAndroid;
+  static bool get isSupported => Platform.isAndroid || Platform.isIOS;
 
   @override
   Future<BenchmarkResult> run(Uint8List source) async {
     if (!isSupported) {
-      throw UnsupportedError('MethodChannel benchmark is Android-only.');
+      throw UnsupportedError('MethodChannel benchmark is mobile-only.');
     }
 
     final sampler = PeakRssSampler()..start();
     final totalSw = Stopwatch()..start();
 
-    // The full round-trip: Dart serializes bytes → channel copies → Kotlin thread →
-    // native compute + MediaStore save → result deserialized back to Dart.
-    // This copy cost is the central thesis of the talk.
+    // The full round-trip: Dart serializes bytes → channel copies → native
+    // thread (Kotlin/Swift) → native compute + gallery save → result
+    // deserialized back to Dart. This copy cost is the central thesis of the talk.
     final raw = await _channel.invokeMethod<Map<Object?, Object?>>(
       'resizeCompressSave',
       {'bytes': source, 'width': 800, 'height': 600, 'quality': 85},

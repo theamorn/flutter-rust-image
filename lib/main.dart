@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'screens/camera_screen.dart';
+import 'screens/showcase_solar_screen.dart';
 import 'src/rust/frb_generated.dart';
 
 Future<void> main() async {
@@ -23,7 +23,7 @@ class RushDemoApp extends StatelessWidget {
           brightness: Brightness.dark,
         ),
       ),
-      home: const CameraScreen(),
+      home: const ShowcaseSolarScreen(),
     );
   }
 }

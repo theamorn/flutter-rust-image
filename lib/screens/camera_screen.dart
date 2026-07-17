@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
@@ -59,7 +61,11 @@ class _CameraScreenState extends State<CameraScreen>
         back,
         ResolutionPreset.max,
         enableAudio: false,
-        imageFormatGroup: ImageFormatGroup.jpeg,
+        // jpeg is Android-only; iOS AVFoundation accepts bgra8888/yuv420.
+        // takePicture() still returns JPEG bytes on both platforms.
+        imageFormatGroup: Platform.isAndroid
+            ? ImageFormatGroup.jpeg
+            : ImageFormatGroup.bgra8888,
       );
       await controller.initialize();
       if (!mounted) return;
